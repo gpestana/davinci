@@ -6,7 +6,7 @@ todo:
 - error handling with execptions
 - log processing
 - refactoring regex parsing 
-- sort posts by date
+- refactoring!!
 */
 
 var genFile = argv._[0]
@@ -70,18 +70,22 @@ function parseRaw(rawPost) {
 
 function generateHTML(objPosts) {
 	objPosts.forEach(function(postData) {
+		var post
 		var htmlFile = output+'/'+postData.slug+'.html'
 		
 		//wrap content with template
-		fs.readFile('example/template.html', function() {
-			finalContent = finalContent.replace("{{"+key+"}}", entry[key]);
-		})
+		fs.readFile('example/template.html', function(err, data) {
+			post = data.toString().replace("{{title}}", postData.title).
+			replace("{{date}}", postData.date).
+			replace("{{content}}", postData.content);
 
-		fs.writeFile(htmlFile, postData.content, function(err) {
-			if(err) {
-				throw err
-			}
-			console.log('>> '+postData.title+' written.')
+			fs.writeFile(htmlFile, post, function(err) {
+				if(err) {
+					throw err
+				}
+				console.log('>> '+postData.title+' written.')
+			})
+
 		})
 	})
 }
